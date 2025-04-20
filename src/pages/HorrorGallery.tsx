@@ -7,6 +7,12 @@ import { Link } from "react-router-dom";
 
 // Создаем 120 изображений с разными эффектами
 const generateHorrorImages = () => {
+  // Функция для генерации случайной строки символов
+  const generateSymbols = (length: number) => {
+    const symbols = "ҨҎӾӿѮҘӨҸҺӜӬӘҼҾȺӂӜҿΩӢӪԱӧӔԲөӫӗХӨѺӐӜѦ";
+    return Array.from({ length }, () => symbols[Math.floor(Math.random() * symbols.length)]).join('');
+  };
+
   return Array.from({ length: 120 }, (_, i) => {
     // Разные типы эффектов
     const types = ["scream", "symbols", "distortion", "inversion"];
@@ -14,8 +20,8 @@ const generateHorrorImages = () => {
     
     return {
       id: i + 1,
-      title: `Ужас #${i + 1}`,
-      description: `Ҩ҈Ѫ҉Ҏ҈Ӿ҉Ӿ҈Ҩ҉ӿ҈Ѯ҉Ӿ҈Ҙ҉ Ө҈Ѯ҉҈҉`,
+      title: `${generateSymbols(8)}`,
+      description: `${generateSymbols(30)}`,
       type,
       path: "/placeholder.svg", // Заглушка для изображений
     };
@@ -94,9 +100,9 @@ export default function HorrorGallery() {
       
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-red-600">Галерея Ужасов</h1>
+          <h1 className="text-3xl font-bold text-red-600">ӬӐҬҾҒӉҎ ѺҔӞӬҒ</h1>
           <Button variant="outline" className="border-red-700 text-red-600">
-            <Link to="/">Вернуться на главную</Link>
+            <Link to="/">ӚѦӚҘҒ</Link>
           </Button>
         </div>
         
@@ -114,7 +120,7 @@ export default function HorrorGallery() {
                     opacity: Math.random(),
                   }}
                 >
-                  {["Ж", "Щ", "Ф", "Ѫ", "Ҩ", "Ѭ", "Ө", "Ӿ"][Math.floor(Math.random() * 8)]}
+                  {["Ж", "Щ", "Ф", "Ѫ", "Ҩ", "Ѭ", "Ө", "Ӿ", "Ҏ", "ӿ", "Ѯ", "Ҙ"][Math.floor(Math.random() * 12)]}
                 </span>
               ))}
             </div>
@@ -147,13 +153,13 @@ export default function HorrorGallery() {
           </div>
           
           <div className="mt-4 font-mono text-green-500">
-            <p className="mb-2 text-lg font-bold">Описание:</p>
+            <p className="mb-2 text-lg font-bold">ӚӁҾҒҾᴥ:</p>
             <div className="text-sm">
               {selectedImage?.description}
             </div>
             <div className="mt-4 text-xs text-gray-400">
               <span>ID: {selectedImage?.id}</span>
-              <span className="ml-4">Тип: {selectedImage?.type}</span>
+              <span className="ml-4">ӨӜҺ: {selectedImage?.type}</span>
             </div>
           </div>
         </DialogContent>
