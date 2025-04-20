@@ -35,20 +35,18 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Horror gallery specific colors */
+    --horror-red: 0 100% 40%;
+    --horror-black: 0 0% 5%;
+    --horror-gray: 0 0% 20%;
   }
 
   .dark {
@@ -97,5 +95,84 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Horror gallery effects */
+.glitch {
+  animation: glitch 0.2s infinite;
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.symbols-effect {
+  overflow: hidden;
+  position: relative;
+  height: 300px;
+}
+
+.symbols-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  color: #ff0000;
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+}
+
+.distort {
+  animation: distort 0.5s infinite;
+}
+
+@keyframes distort {
+  0% {
+    filter: blur(0px) hue-rotate(0deg);
+  }
+  50% {
+    filter: blur(2px) hue-rotate(90deg);
+  }
+  100% {
+    filter: blur(0px) hue-rotate(0deg);
+  }
+}
+
+.invert {
+  animation: invert 0.3s infinite;
+}
+
+@keyframes invert {
+  0% {
+    filter: invert(0%);
+  }
+  50% {
+    filter: invert(100%);
+  }
+  100% {
+    filter: invert(0%);
   }
 }
