@@ -1,136 +1,163 @@
-import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { HorrorImage } from "@/components/HorrorImage";
-import { Scream } from "@/components/Scream";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { HorrorImage } from "../components/HorrorImage";
+import { Scream } from "../components/Scream";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Link } from "react-router-dom";
 
-const horrorImages = Array.from({ length: 12 }, (_, i) => ({
-  id: i + 1,
-  title: `Кошмар №${i + 1}`,
-  description: [
-    "Ṫ̷̨̜͠h̸̪̣̋͒͘e̶̲͍̓ ̴̧͇̫̓ș̴̏ḩ̵̔̈́a̸̪̥̼̋̈́d̵̨̮̿́ǒ̸̩̩͗w̴̘̣̫̃͝ ̵̭͍͙̐͝ẃ̶̪̩͝á̸͕̭̮̄t̴̠̓c̴̡̿͘ͅh̶̖̥̒̕ë̵̹͔́̐s̶̝͑͘",
-    "В̵̖̑̋̀ѝ̶͖́̓ж̵̡̘̝͘у̵̝̩̖̅ ̸̢̜͎̓̇т̵̪̟̍ё̵͍̳͕́̀̕б̵̡̯͒̂я̵̤͒̄̂",
-    "N̴̛̮̂̀e̶̯̭̤͆v̶̦̭̱͗̽̂e̸̙͇̠̿͗r̶̼̗̀͜ ̴̱͚̽̎̽t̷̖͋͝͝ŭ̸̘̽͘r̸̛̙͛n̸̳̦̟͝ ̵̃͜a̸̫͔̾̉̅r̷̤̄̓̊o̵̧̻̓ư̵̳̮̑n̵̮̤̎d̸̞̎"
-  ][i % 3],
-  type: ["scream", "symbols", "distort", "invert"][i % 4],
-  path: `/placeholder.svg`,
-}));
-
-const HorrorGallery = () => {
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [showScream, setShowScream] = useState(false);
-  const [showSymbols, setShowSymbols] = useState(false);
-  const navigate = useNavigate();
-
-  const handleImageClick = (id: number) => {
-    setSelectedImage(id);
-    const image = horrorImages.find(img => img.id === id);
+// Создаем 120 изображений с разными эффектами
+const generateHorrorImages = () => {
+  return Array.from({ length: 120 }, (_, i) => {
+    // Разные типы эффектов
+    const types = ["scream", "symbols", "distortion", "inversion"];
+    const type = types[Math.floor(Math.random() * types.length)];
     
-    if (image?.type === "scream") {
-      setTimeout(() => {
-        setShowScream(true);
-        // Воспроизведение звука
-        const audio = new Audio("/scream.mp3");
-        audio.volume = 0.3;
-        audio.play().catch(e => console.log("Audio failed to play:", e));
-        
-        setTimeout(() => {
-          setShowScream(false);
-          setSelectedImage(null);
-        }, 1500);
-      }, 500);
-    } else if (image?.type === "symbols") {
-      setShowSymbols(true);
-      setTimeout(() => {
+    return {
+      id: i + 1,
+      title: `Ужас #${i + 1}`,
+      description: `Ҩ҈Ѫ҉Ҏ҈Ӿ҉Ӿ҈Ҩ҉ӿ҈Ѯ҉Ӿ҈Ҙ҉ Ө҈Ѯ҉҈҉`,
+      type,
+      path: "/placeholder.svg", // Заглушка для изображений
+    };
+  });
+};
+
+export default function HorrorGallery() {
+  const [images] = useState(generateHorrorImages());
+  const [showScream, setShowScream] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<null | {
+    id: number;
+    title: string;
+    description: string;
+    type: string;
+    path: string;
+  }>(null);
+  const [showSymbols, setShowSymbols] = useState(false);
+  const [distortedImage, setDistortedImage] = useState(false);
+  const [invertedImage, setInvertedImage] = useState(false);
+
+  useEffect(() => {
+    if (showSymbols) {
+      const timeout = setTimeout(() => {
         setShowSymbols(false);
-        setSelectedImage(null);
       }, 3000);
-    } else if (image?.type === "distort") {
-      // Эффект искажения страницы
-      document.body.classList.add("distort");
-      setTimeout(() => {
-        document.body.classList.remove("distort");
-        setSelectedImage(null);
+      return () => clearTimeout(timeout);
+    }
+  }, [showSymbols]);
+
+  useEffect(() => {
+    if (distortedImage) {
+      const timeout = setTimeout(() => {
+        setDistortedImage(false);
       }, 2000);
-    } else if (image?.type === "invert") {
-      // Эффект инверсии цветов
-      document.body.classList.add("invert");
-      setTimeout(() => {
-        document.body.classList.remove("invert");
-        setSelectedImage(null);
+      return () => clearTimeout(timeout);
+    }
+  }, [distortedImage]);
+
+  useEffect(() => {
+    if (invertedImage) {
+      const timeout = setTimeout(() => {
+        setInvertedImage(false);
       }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [invertedImage]);
+
+  const handleImageClick = (image: {
+    id: number;
+    title: string;
+    description: string;
+    type: string;
+    path: string;
+  }) => {
+    setSelectedImage(image);
+    
+    // Разные эффекты в зависимости от типа изображения
+    if (image.type === "scream") {
+      setShowScream(true);
+      
+      // Проигрывание звука скримера (добавьте звуковой файл)
+      // const audio = new Audio('/scream.mp3');
+      // audio.play();
+    } else if (image.type === "symbols") {
+      setShowSymbols(true);
+    } else if (image.type === "distortion") {
+      setDistortedImage(true);
+    } else if (image.type === "inversion") {
+      setInvertedImage(true);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold mb-2 text-red-600">Галерея Кошмаров</h1>
-        <p className="text-gray-400">Н̵̘̊̐е̸̨̐ ̸̫̂̓н̸̡̗̎̍а̴̺̍ж̶̛̠и̶̢͙̏м̷̢̠̉ӓ̷̡̟́̅й̶̗̃ ̶̲͒н̴̲̺̓а̶̩̀͜ ̸͎͎̓и̸͓̂̊з̷̘̆͜о̴̣̓̉б̶̭̪̒͒р̸̗̝͑ӑ̴̲͉̚ж̶͊ͅе̵̞̙͒̓н̴̖̐й̴̜̚я̶̥͑</p>
-        <button 
-          className="mt-4 text-gray-400 hover:text-white transition-colors"
-          onClick={() => navigate("/")}
-        >
-          ← Вернуться на главную
-        </button>
-      </header>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {horrorImages.map((image) => (
-          <HorrorImage 
-            key={image.id}
-            image={image}
-            onClick={() => handleImageClick(image.id)}
-          />
-        ))}
+    <div className={`min-h-screen bg-black text-white ${invertedImage ? 'invert' : ''}`}>
+      {showScream && <Scream />}
+      
+      <div className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-red-600">Галерея Ужасов</h1>
+          <Button variant="outline" className="border-red-700 text-red-600">
+            <Link to="/">Вернуться на главную</Link>
+          </Button>
+        </div>
+        
+        {showSymbols && (
+          <div className="fixed inset-0 flex items-center justify-center z-40 bg-black bg-opacity-80 pointer-events-none">
+            <div className="text-8xl text-red-600 animate-pulse">
+              {Array.from({ length: 100 }).map((_, i) => (
+                <span 
+                  key={i} 
+                  style={{
+                    position: 'absolute',
+                    top: `${Math.random() * 100}%`,
+                    left: `${Math.random() * 100}%`,
+                    transform: `rotate(${Math.random() * 360}deg)`,
+                    opacity: Math.random(),
+                  }}
+                >
+                  {["Ж", "Щ", "Ф", "Ѫ", "Ҩ", "Ѭ", "Ө", "Ӿ"][Math.floor(Math.random() * 8)]}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {images.map((image) => (
+            <HorrorImage 
+              key={image.id} 
+              image={image} 
+              onClick={() => handleImageClick(image)}
+            />
+          ))}
+        </div>
       </div>
-
-      <Dialog open={selectedImage !== null} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="bg-black border-red-900 text-white max-w-2xl">
-          {selectedImage && !showScream && !showSymbols && (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-red-600 mb-2">
-                {horrorImages.find(img => img.id === selectedImage)?.title}
-              </h2>
-              <div className="my-4">
-                <img 
-                  src={horrorImages.find(img => img.id === selectedImage)?.path} 
-                  alt="Horror" 
-                  className="w-full h-64 object-cover filter contrast-125 brightness-75"
-                />
-              </div>
-              <p className="text-gray-400 font-mono">
-                {horrorImages.find(img => img.id === selectedImage)?.description}
-              </p>
-            </div>
-          )}
+      
+      <Dialog open={selectedImage !== null} onOpenChange={(open) => !open && setSelectedImage(null)}>
+        <DialogContent className={`bg-gray-900 text-white max-w-3xl ${distortedImage ? 'distorted' : ''}`}>
+          <DialogTitle className="text-red-600 text-2xl font-bold">
+            {selectedImage?.title}
+          </DialogTitle>
           
-          {showSymbols && (
-            <div className="symbols-effect">
-              <div className="symbols-container">
-                {"Ṫ̷̨̜͠h̸̪̣̋͒͘e̶̲͍̓ ̴̧͇̫̓ș̴̏ḩ̵̔̈́a̸̪̥̼̋̈́d̵̨̮̿́ǒ̸̩̩͗w̴̘̣̫̃͝ ̵̭͍͙̐͝ẃ̶̪̩͝á̸͕̭̮̄t̴̠̓c̴̡̿͘ͅh̶̖̥̒̕ë̵̹͔́̐s̶̝͑͘"
-                  .split("")
-                  .map((char, i) => (
-                    <span 
-                      key={i} 
-                      className="inline-block animate-pulse"
-                      style={{ 
-                        animationDelay: `${i * 0.05}s`,
-                        fontSize: `${Math.random() * 1.5 + 1}rem` 
-                      }}
-                    >
-                      {char}
-                    </span>
-                  ))}
-              </div>
+          <div className="mt-4">
+            <img 
+              src={selectedImage?.path} 
+              alt={selectedImage?.title} 
+              className="w-full h-64 object-cover opacity-80" 
+            />
+          </div>
+          
+          <div className="mt-4 font-mono text-green-500">
+            <p className="mb-2 text-lg font-bold">Описание:</p>
+            <div className="text-sm">
+              {selectedImage?.description}
             </div>
-          )}
+            <div className="mt-4 text-xs text-gray-400">
+              <span>ID: {selectedImage?.id}</span>
+              <span className="ml-4">Тип: {selectedImage?.type}</span>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
-      
-      {showScream && <Scream />}
     </div>
   );
-};
-
-export default HorrorGallery;
+}
